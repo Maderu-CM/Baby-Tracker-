@@ -7,10 +7,24 @@
   pointer-events: none;
 }
 
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+nav{
+  height: 50px;
+  background-color: aqua;
+  border: #61dafb;
+}
+
+.event-hub-text {
+  margin-top: 13px;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333; 
+ 
 }
 
 section {

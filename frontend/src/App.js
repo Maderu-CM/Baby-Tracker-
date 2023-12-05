@@ -35,8 +35,7 @@ function App() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${baseUrl}/event/${id}`);
-      const updatedList = eventsList.filter(event => event.id !== id);
-      setEventsList(updatedList);
+      await fetchEvents();
     } catch (err) {
       console.error(err.message);
     }
@@ -47,7 +46,6 @@ function App() {
     try {
       if (editDescription && editedEventId) {
         await axios.put(`${baseUrl}/event/${editedEventId}`, { description: editDescription });
-        // Fetch events again to update the events list with the latest changes
         await fetchEvents();
       } else {
         const data = await axios.post(`${baseUrl}/event`, { description });
@@ -67,46 +65,69 @@ function App() {
 
   return (
     <div className="App">
+      <nav>
+        <span className="event-hub-text">PROJECT TRACKER</span>
+      </nav>
       <section>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor='description'>Description</label>
-          <input
-            onChange={(e) => handleInputChange(e, 'description')}
-            type='text'
-            name='description'
-            id='description'
-            placeholder='Describe the Event'
-            value={description}
-          />
-          <button type='submit'>Submit</button>
+        <form onSubmit={handleSubmit} className="my-4">
+          <div className="form-group">
+            <label htmlFor='description'>Description</label>
+            <input
+              onChange={(e) => handleInputChange(e, 'description')}
+              type='text'
+              className="form-control"
+              name='description'
+              id='description'
+              placeholder='Describe the Event'
+              value={description}
+            />
+          </div>
+          <button type='submit' className="btn btn-primary mt-2">Submit</button>
         </form>
+
       </section>
 
       <section>
-        <ul>
-          {eventsList.map(event => (
-            <React.Fragment key={event.id}>
-              {editedEventId === event.id ? (
-                <form onSubmit={handleSubmit}>
-                  <input
-                    onChange={(e) => handleInputChange(e, 'edit')}
-                    type='text'
-                    name='editDescription'
-                    id='editDescription'
-                    value={editDescription}
-                  />
-                  <button type='submit'>Update</button>
-                </form>
-              ) : (
-                <li style={{ display: "flex" }} key={event.id}>
-                  {event.description}
-                  <button onClick={() => toggleEdit(event)}>Edit</button>
-                  <button onClick={() => handleDelete(event.id)}>X</button>
-                </li>
-              )}
-            </React.Fragment>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>EVENTS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eventsList.map(event => (
+              <tr key={event.id}>
+                {editedEventId === event.id ? (
+                  <>
+                    <td>
+                      <input
+                        onChange={(e) => handleInputChange(e, 'edit')}
+                        type='text'
+                        name='editDescription'
+                        id='editDescription'
+                        value={editDescription}
+                      />
+                    </td>
+                    <td>
+                      <button className="btn btn-primary" onClick={handleSubmit}>Update</button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td colSpan="1">{event.description}</td>
+                    <td colSpan="1">
+                      <button className="btn btn-warning" onClick={() => toggleEdit(event)}>Edit</button>
+                    </td>
+                    <td colSpan="1">
+                      <button className="btn btn-danger" onClick={() => handleDelete(event.id)}>X</button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
     </div>
   );
